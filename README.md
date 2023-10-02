@@ -6,11 +6,11 @@
   <p align="center">
     <b>Parsec Tray Tool</b>
     <br />
-    <a href="https://github.com/MickeyUK/map-email-scraper/releases">Latest Release</a>
+    <a href="https://github.com/MickeyUK/parsec-tray-tool/releases">Latest Release</a>
     ·
-    <a href="https://github.com/MickeyUK/map-email-scraper/issues">Report Bug</a>
+    <a href="https://github.com/MickeyUK/parsec-tray-tool/issues">Report Bug</a>
     ·
-    <a href="https://github.com/MickeyUK/map-email-scraper/issues">Request Feature</a>
+    <a href="https://github.com/MickeyUK/parsec-tray-tool/issues">Request Feature</a>
   </p>
 </p>
 
