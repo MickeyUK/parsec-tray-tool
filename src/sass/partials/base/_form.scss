@@ -1,0 +1,77 @@
+input[type="checkbox"] {
+    margin: 0;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.form-text {
+    opacity: 0.7;
+}
+
+.form-checkbox {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+    background: $bg-tertiary;
+    border: solid 1px rgba($bg-secondary, 1);
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+    color: $color-primary;
+    padding: 0.5rem 1rem;
+    width: 100%;
+}
+
+input[type="checkbox"] {
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+}
+
+input[type="checkbox"]::before {
+    background: #000;
+    display: flex;
+    background: $bg-tertiary;
+    border: solid 1px rgba($color-primary, 0.2);
+    box-sizing: border-box;
+    content: "";
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    z-index: 2;
+    top: 1px;
+    pointer-events: none;
+    color: #fff;
+}
+
+input[type="checkbox"]:checked::before {
+    background: $brand-primary;
+}
+
+input[type="checkbox"]:checked::after {
+    content: "\2713";
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    z-index: 2;
+    bottom: 4px;
+    left: 3px;
+    color: #FFF;
+}

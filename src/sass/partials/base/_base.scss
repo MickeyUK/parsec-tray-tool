@@ -1,0 +1,237 @@
+body {
+    background: $bg-primary;
+    color: $color-primary;
+    font-family: $font-primary;
+    font-size: 14px;
+    line-height: 1.42857143;
+    padding: 0;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: $font-weight-light;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    font-weight: bold;
+    color: $brand-secondary;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $brand-primary;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: $brand-secondary;
+}
+
+::-webkit-scrollbar-track,
+.progress-container {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#app {
+    height: 100vh;
+}
+
+.container {
+    margin-right: auto;
+    margin-left: auto;
+    max-width: $breakpoint-lg;
+    width: 100%;
+}
+
+.fill {
+    background-color: $bg-tertiary;
+}
+
+.muted {
+    opacity: 0.7;
+}
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.logo img {
+    width: 64px;
+}
+
+.user {
+    cursor: pointer;
+    transform: scale(1);
+    transition: all .2s ease-in-out;
+    display: inline-block;
+}
+
+.user:hover {
+    transform: scale(1.01);
+    transition: all .2s ease-in-out;
+}
+
+.user .id {
+    color: #b1ccff;
+}
+
+.user .name {
+    font-weight: bold;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -$grid-gutter;
+    margin-left: -$grid-gutter;
+    gap: $grid-gutter;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    padding-right: $grid-gutter;
+    padding-left: $grid-gutter;
+    gap: $grid-gutter;
+    flex: 1;
+}
+
+.grid {
+    display: inline-flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: $grid-gutter;
+    background-color: $bg-tertiary;
+    border-radius: .5rem;
+    width: 100%;
+}
+
+#auth form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    gap: 2rem;
+    margin: 0 auto;
+}
+
+.tile {
+    background: $bg-secondary;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    width: 175px;
+    height: 175px;
+    transition: all 0.2s ease-in-out;
+}
+
+.tile:hover {
+    transform: scale(1.01);
+    transition: all 0.2s ease-in-out;
+}
+
+.tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.25rem;
+}
+
+.notice {
+    display: flex;
+    align-items: center;
+    background-color: $bg-tertiary;
+    border: dashed 1px rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+    padding: 1rem;
+    gap: .5rem;
+    flex-direction: column;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex.align-center {
+    align-items: center;
+}
+
+.flex.justify-center {
+    justify-content: center;
+}
+
+.flex.justify-between {
+    justify-content: space-between;
+}
+
+.flex.justify-end {
+    justify-content: flex-end;
+}
+
+.flex.justify-around {
+    justify-content: space-around;
+}
+
+.flex.justify-evenly {
+    justify-content: space-evenly;
+}
+
+.flex.align-start {
+    align-items: flex-start;
+}
+
+.flex.align-end {
+    align-items: flex-end;
+}
+
+.flex.align-stretch {
+    align-items: stretch;
+}
+
+.flex.align-baseline {
+    align-items: baseline;
+}
+
+.flex.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
+.flex.flex-wrap-reverse {
+    flex-wrap: wrap-reverse;
+}
+
+.flex.flex-column {
+    flex-direction: column;
+}
+
+.flex.flex-column-reverse {
+    flex-direction: column-reverse;
+}
+
+.flex.flex-row {
+    flex-direction: row;
+}
+
+// The console warning is sufficient, Firebase... ¬_¬
+.firebase-emulator-warning {
+    display: none;
+}

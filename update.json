@@ -1,0 +1,11 @@
+{
+  "version": "v1.0.0",
+  "notes": "First build woooooo",
+  "pub_date": "2023-09-29T16:45:57Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "",
+      "url": "https://github.com/MickeyUK/parsec-tray-tool/releases/download/1.0.0/app-x64.msi"
+    }
+  }
+}

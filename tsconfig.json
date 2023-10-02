@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/typings" // Add your custom typings directory here
+    ],
+    "allowSyntheticDefaultImports": true,
+  },
+  "include": ["src/**/*.ts", "src/typings/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.svg", "assets/**/*.svg"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
