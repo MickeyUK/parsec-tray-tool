@@ -6,8 +6,12 @@ import { exit } from '@tauri-apps/api/process';
 import { defineComponent } from 'vue';
 
 import StoreService from '@/services/StoreService';
+import EventService from '@/services/EventService';
 
 import Settings from '@/components/Settings.vue';
+
+import User from './models/User';
+import GuestStatus from './models/GuestStatus';
 
 export default defineComponent({
   name: 'App',
@@ -28,6 +32,8 @@ export default defineComponent({
         isHosting: false,
         showSettings: false,
         refreshInterval: null as any,
+        currentGuests: [] as User[],
+        maxGuests: 0,
     };
   },
   methods: {
@@ -107,10 +113,9 @@ export default defineComponent({
         this.showSettings = true;
     },
     setNavPill(id: string) {
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach((navItem) => {
-            navItem.classList.remove('active');
-        });
+        // @ts-ignore
+        $('.nav .nav-item').removeClass('active');
+        
         const navItem = document.querySelector('#nav-' + id);
         if (navItem) {
             navItem.classList.add('active');
@@ -219,7 +224,7 @@ export default defineComponent({
             <iframe ref="iframeRef" :src="url" frameborder="0" width="100%" height="100%"></iframe>
             <div ref="windowRef" id="window-content" style="display: none;">
                 <div class="container" style="margin: 0 auto; padding: 20px;">
-                    <Settings v-if="showSettings" />
+                    <Settings />
                 </div>
             </div>
             <div id="window-footer">

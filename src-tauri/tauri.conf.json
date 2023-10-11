@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Parsec Tray Tool",
-    "version": "1.0.2"
+    "version": "1.0.3"
   },
   "tauri": {
     "allowlist": {

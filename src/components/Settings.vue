@@ -64,14 +64,18 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.setActivePill(0);
 
     // Update guests
     this.updateEvent = () => {
       this.recentGuests = [...StoreService.recentGuests];
       this.bannedGuests = [...StoreService.config.banned];
+      console.log('updated guests');
     };
     EventService.on('guests:updated', this.updateEvent);
+
+    console.log(StoreService.recentGuests);
+
+    this.setActivePill(0);
 
   },
   beforeUnmount() {
