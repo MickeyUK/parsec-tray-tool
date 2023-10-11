@@ -1,8 +1,3 @@
-functions
-.env.development
-.env.production
-src-tauri/target
-
 # Logs
 logs
 *.log

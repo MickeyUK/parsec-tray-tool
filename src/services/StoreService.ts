@@ -28,17 +28,17 @@ class StoreService {
     public config: {
         acceptAll: boolean,
         banned: GuestStatus[],
-        calls: number,
-        lastCall: number,
-        room: Room | undefined,
-        session: string | undefined,
+        roomToken: null | string,
+        roomTokenExpiry: number,
+        parsecUsername: null | string,
+        version: string,
     } = {
         acceptAll: true,
         banned: [],
-        calls: 0,
-        lastCall: 0,
-        room: undefined,
-        session: undefined,
+        roomToken: null,
+        roomTokenExpiry: 0,
+        parsecUsername: null,
+        version: '1.0.3',
     };
 
     public windowVisible: boolean = true;
@@ -62,15 +62,29 @@ class StoreService {
         this._store = new Store('config.dat');
         const config = await this._store.get('config') as any;
         if (config) {
+
+            // Load the settings
             this.config = config;
 
-            // Are people being dopes and not updating host name...? ¬_¬
-            if (typeof this.config.room?.host === 'object') {
-                this.config.room.host = '';
+            // Old outdated settings?
+            if (!this.config.version) {
+                this.config = {
+                    acceptAll: true,
+                    banned: [],
+                    roomToken: null,
+                    roomTokenExpiry: 0,
+                    parsecUsername: null,
+                    version: '1.0.3',
+                };
             }
+
+            this._setToken();
 
         } else {
             console.log("No config found");
+
+            // Set token
+            this._setToken();
         }
 
         await tauri.invoke('set_auto_accept', {
@@ -78,6 +92,31 @@ class StoreService {
         }).catch((error) => {
             console.error(error);
         });
+
+    }
+
+    /**
+     * @description Set the token for creating/updating the room.
+     */
+    private async _setToken() {
+
+        // Token is valid
+        if (this.config.roomToken && this.config.roomTokenExpiry > Date.now()) {
+            return;
+        }
+
+        // Get a new token
+        this.config.roomToken = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+
+        // Set expiry
+        this.config.roomTokenExpiry = Date.now() + (1000 * 60 * 60 * 24);
+
+        // Save
+        this.save();
 
     }
 
@@ -120,30 +159,6 @@ class StoreService {
      */
     public isBanned(user: User) {
         return this.config.banned.find((banned) => banned.user.id === user.id) ? true : false;
-    }
-
-    /**
-     * @description Check if the user has hit the limit for the cloud function.
-     */
-    public hitLimit() {
-
-        // 10 calls per 15 minutes
-        if (this.config.lastCall === 0 || Date.now() - this.config.lastCall > 900000) {
-            this.config.calls = 0;
-            this.config.lastCall = Date.now();
-            this.save();
-            return false;
-        }
-
-        if (this.config.calls >= 10) {
-            return true;
-        }
-
-        this.config.calls++;
-        this.config.lastCall = Date.now();
-        this.save();
-        return false;
-
     }
 
 }

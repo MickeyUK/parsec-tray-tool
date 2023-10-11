@@ -2,9 +2,8 @@
 import { defineComponent } from 'vue';
 import { writeText } from '@tauri-apps/api/clipboard';
 
-import Helper from '@/modules/Helper';
+import Helper from '@/services/Helper';
 
-import HostingService from '@/services/HostingService';
 import StoreService from '@/services/StoreService';
 import EventService from '@/services/EventService';
 
@@ -12,7 +11,7 @@ import GuestStatus from '@/models/GuestStatus';
 import User from '@/models/User';
 
 export default defineComponent({
-  name: 'GuestsTab',
+  name: 'Settings',
   data() {
     return {
       activePill: 0,
@@ -95,7 +94,7 @@ export default defineComponent({
           </div>
         </div>
 
-        <div class="nav pills">
+        <div class="pills">
           <div class="nav-item pill active" @click="setActivePill(0)">Recent Guests</div>
           <div class="nav-item pill" @click="setActivePill(1)">Banned Guests</div>
         </div>
@@ -170,3 +169,15 @@ export default defineComponent({
       </div>
     </div>
 </template>
+
+<style>
+.pills {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.pills .pill-item {
+    display: inline-flex;
+}
+</style>

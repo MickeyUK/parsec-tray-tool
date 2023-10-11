@@ -2,7 +2,7 @@
 name = "parsec-tray-tool"
 version = "0.0.0"
 description = "Parsec Tray Tool"
-authors = ["you"]
+authors = ["Mickey Dearman"]
 license = ""
 repository = ""
 edition = "2021"
@@ -10,10 +10,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.4", features = [] }
+tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-tauri = { version = "1.4", features = [ "process-all", "window-all", "system-tray", "shell-open", "fs-all", "http-all", "clipboard-all"] }
+tauri = { version = "1.5", features = [ "window-all", "system-tray", "clipboard-all", "fs-all", "process-all", "http-all", "shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 serde_json = "1.0"

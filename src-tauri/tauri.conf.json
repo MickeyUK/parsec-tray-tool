@@ -23,8 +23,6 @@
       "http": {
         "all": true,
         "scope": [
-          "https://*.parsec.app/*",
-          "http://127.0.0.1:5001/*",
         ]
       },
       "fs": {
@@ -63,10 +61,11 @@
         "title": "Parsec Tray Tool",
         "width": 1280,
         "height": 720,
-        "minWidth": 1280,
-        "minHeight": 720,
+        "minWidth": 480,
+        "minHeight": 640,
         "transparent": false,
-        "decorations": true
+        "decorations": true,
+        "userAgent": "ParsecTrayTool"
       }
     ]
   }

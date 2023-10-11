@@ -1,132 +1,197 @@
 <script lang="ts">
-import { getVersion } from '@tauri-apps/api/app';
+import { open } from '@tauri-apps/api/shell';
+import { getVersion, show } from '@tauri-apps/api/app';
 import { listen } from '@tauri-apps/api/event';
 import { exit } from '@tauri-apps/api/process';
 import { defineComponent } from 'vue';
 
-import ArcadeTab    from '@/components/tabs/ArcadeTab.vue';
-import HostingTab   from '@/components/tabs/HostingTab.vue';
-import GuestsTab    from '@/components/tabs/GuestsTab.vue';
-
-import FirebaseService from '@/services/FirebaseService';
 import StoreService from '@/services/StoreService';
-import EventService from '@/services/EventService';
 
-import User from './models/User';
-import HostingService from './services/HostingService';
+import Settings from '@/components/Settings.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    ArcadeTab,
-    HostingTab,
-    GuestsTab
+    Settings,
   },
   data() {
     return {
-        tabs: [
-            'Arcade',
-            'Hosting',
-            'Guests',
-        ],
-        window: true,
-        authPage: 0,
-        tab: 0,
-        isHosting: (HostingService.currentRoom ? true : false),
-        hideEvent: null as any,
-        hostEvent: null as any,
-        tabEvent: null as any,
-        version: ''
+        showArcadeTab: true,
+        showChatTab: false,
+        showHostingTab: true,
+        showSettingsTab: true,
+        showHelpTab: true,
+        version: '',
+        url: 'https://mickeyuk.com/arcade?ptt=1',
+        roomId: '',
+        roomToken: StoreService.config.roomToken,
+        isHosting: false,
+        showSettings: false,
+        refreshInterval: null as any,
     };
   },
   methods: {
-    setAuthPage(index: number) {
-        this.authPage = index;
-    },
-    forgot(e: Event) {
-
-        e.preventDefault();
-        (this.$refs.formRef as HTMLFormElement).classList.add('disabled');
-        
-        // Convert form data to object
-        const form = e.target as HTMLFormElement;
-        const formData = new FormData(form) as any;
-        const data = Object.fromEntries(formData.entries());
-
-    },
-    hideWindow() {
-        this.window = false;
-    },
-    showWindow() {
-        this.window = true;
-    },
-    setTab(index: number) {
-
-        // Set tab index
-        this.tab = index;
-
-        // Set tab title
-        (this.$refs.tabTitleRef as HTMLElement).innerHTML = this.tabs[index];
-        
-        // Remove active class from all nav items
-        let navItems = document.getElementsByClassName('nav-item');
-        for (let i = 0; i < navItems.length; i++) {
-            navItems[i].classList.remove('active');
-        }
-
-        // Add active class to selected nav item
-        navItems[index].classList.add('active');
-
+    openExternal(url: string) {
+        open(url);
     },
     async stopHosting() {
-        HostingService.stopHosting();
-        this.isHosting = false;
+
+        // Ajax call to stop hosting
+        const response = await fetch('https://mickeyuk.com/api/arcade/room/close', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                room_token: this.roomToken,
+            }),
+        });
+
+        // Get response
+        const data = await response.json();
+
+        // If 200 then close room
+        if (data.status === 200) {
+            this.isHosting = false;
+        }
+
+        // Clear refresh interval
+        if (this.refreshInterval)
+            clearInterval(this.refreshInterval);
+
+        // Refresh iframe
+        this.setArcadeTab();
+
+        // Disable chat
+        this.disableChat();
+
+    },
+    async refreshRoom() {
+
+        // Ajax call to keep room awake
+        const response = await fetch('https://mickeyuk.com/api/arcade/room/refresh', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                room_token: this.roomToken,
+            }),
+        });
+
+        // Get response
+        const data = await response.json();
+
     },
     async quit() {
-        if (HostingService.currentRoom) {
-            await FirebaseService.deleteRoom(HostingService.currentRoom);
-            exit(0);
-        } else {
-            exit(0);
+      exit(0);
+    },
+    setArcadeTab() {
+        this.setNavPill('arcade');
+        this.url = 'https://mickeyuk.com/arcade?ptt=1';
+        this.showIframe();
+    },
+    setChatTab() {
+        this.setNavPill('chat');
+        this.showIframe();
+    },
+    setHostingTab() {
+        this.roomToken = StoreService.config.roomToken;
+        this.setNavPill('hosting');
+        this.url = 'https://mickeyuk.com/arcade/hosting?ptt=1&room_token=' + this.roomToken;
+        this.showIframe();
+    },
+    setSettingsTab() {
+        this.setNavPill('settings');
+        this.showWindow();
+        this.showSettings = true;
+    },
+    setNavPill(id: string) {
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach((navItem) => {
+            navItem.classList.remove('active');
+        });
+        const navItem = document.querySelector('#nav-' + id);
+        if (navItem) {
+            navItem.classList.add('active');
         }
+    },
+    toggleNav() {
+        let nav = document.getElementsByClassName('nav')[0];
+        if (nav.classList.contains('active')) {
+            nav.classList.remove('active');
+        } else {
+            nav.classList.add('active');
+        }
+    },
+    showIframe() {
+        (this.$refs.iframeRef as HTMLIFrameElement).style.display = 'block';
+        (this.$refs.windowRef as HTMLElement).style.display = 'none';
+        this.showSettings = false;
+    },
+    showWindow() {
+        (this.$refs.iframeRef as HTMLIFrameElement).style.display = 'none';
+        (this.$refs.windowRef as HTMLElement).style.display = 'block';
+    },
+    enableChat() {
+        this.showArcadeTab = false;
+        this.showHostingTab = false;
+        this.showChatTab = true;
+        setTimeout(() => {
+            this.setChatTab();
+        }, 0);
+    },
+    disableChat() {
+        this.showArcadeTab = true;
+        this.showHostingTab = true;
+        this.showChatTab = false;
+        setTimeout(() => {
+            this.setArcadeTab();
+        }, 0);
     },
   },
   async mounted() {
 
     // System tray menu
     listen('tab', (data: any) => {
-        StoreService.windowVisible = true;
         const payload = data.payload;
-        this.setTab(payload.tab);
+        
     });
 
-    // Tab event
-    this.tabEvent = (data: any) => {
-        StoreService.windowVisible = true;
-        this.setTab(data.tab);
-    };
-    EventService.on('tab', this.tabEvent);
+    // On quit
+    listen('quit', async () => {
+        
+        // Close room if hosting
+        if (this.isHosting) {
+            await this.stopHosting();
+        }
 
-    // Hide event
-    this.hideEvent = () => {
-        StoreService.windowVisible = false;
-        this.tab = 2;
-        this.window = false;
-    };
-    EventService.on('hide', this.hideEvent);
-
-    // Hosting event
-    this.hostEvent = () => {
-        this.isHosting = HostingService.currentRoom ? true : false;
-    };
-    EventService.on('host', this.hostEvent);
-
-    // Set default tab
-    this.setTab(2);
+        this.quit();
+    });
 
     // Set version
     getVersion().then((version) => {
         this.version = version;
+    });
+
+    // Listen for message from iframe src
+    window.addEventListener('message', (event) => {
+        const message = event.data;
+        switch(message.type) {
+            case 'isHosting':
+                if (message.value == true && !this.isHosting) {
+                    // Refresh room every 55 minutes
+                    this.refreshInterval = setInterval(() => {
+                        this.refreshRoom();
+                    }, 3300000);
+                }
+                this.isHosting = message.value;
+            break;
+            case 'enableChat':
+                this.roomId = message.roomId;
+                this.enableChat();
+            break;
+        }
     });
     
   },
@@ -135,24 +200,26 @@ export default defineComponent({
 
 <template>
     <div id="app">
-        <div id="window" v-if="window">
+        <div id="window">
             <div id="window-header">
                 <div id="window-title">
                     <h1 ref="tabTitleRef">Arcade</h1>
                 </div>
+                <div class="nav-toggle" @click="toggleNav">
+                  <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m22 16.75c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75z" fill-rule="nonzero"/></svg>
+                </div>
                 <div class="nav">
-                    <div class="nav-item active" @click="setTab(0)">Arcade</div>
-                    <div class="nav-item" @click="setTab(1)">Hosting</div>
-                    <div class="nav-item" @click="setTab(2)">Guests</div>
+                    <div id="nav-arcade" class="nav-item active" v-if="showArcadeTab" @click="setArcadeTab">Arcade</div>
+                    <div id="nav-chat"  class="nav-item" v-if="showChatTab" @click="setChatTab">Chat</div>
+                    <div id="nav-hosting" class="nav-item" v-if="showHostingTab" @click="setHostingTab">Hosting</div>
+                    <div id="nav-settings" class="nav-item" v-if="showSettingsTab" @click="setSettingsTab">Settings</div>
+                    <div id="nav-help" class="nav-item" v-if="showHelpTab" @click="openExternal('https://mickeyuk.com/arcade/help')">Help</div>
                 </div>
             </div>
-            <div id="window-content">
-                <div class="container">
-                    <div id="tabs-container">
-                        <ArcadeTab v-if="tab == 0" />
-                        <HostingTab v-if="tab == 1" />
-                        <GuestsTab v-if="tab == 2" />
-                    </div>
+            <iframe ref="iframeRef" :src="url" frameborder="0" width="100%" height="100%"></iframe>
+            <div ref="windowRef" id="window-content" style="display: none;">
+                <div class="container" style="margin: 0 auto; padding: 20px;">
+                    <Settings v-if="showSettings" />
                 </div>
             </div>
             <div id="window-footer">
@@ -182,5 +249,16 @@ export default defineComponent({
 
 .col > div {
     width: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    .container {
+        max-width: 100% !important;
+        padding: 20px !important;
+    }
 }
 </style>
